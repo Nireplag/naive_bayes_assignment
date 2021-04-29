@@ -2,6 +2,8 @@
 # Testes do Modelo
 # 
 import spam_classifier
+import modules
+
 messages = [Message("spam rules", is_spam=True),
             Message("ham rules", is_spam=False),
             Message("hello ham", is_spam=False)]
@@ -36,5 +38,4 @@ p_if_ham = math.exp(sum(math.log(p) for p in probs_if_ham))
 
 # Should be about 0.83
 assert math.isclose(model.predict(text), p_if_spam / (p_if_spam + p_if_ham))
-
 
