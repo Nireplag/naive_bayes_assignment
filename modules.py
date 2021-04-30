@@ -7,8 +7,11 @@ import time # compute time of execution
 import glob
 import mailbox
 import pandas as pd
+from nltk.stem import PorterStemmer
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 X = TypeVar('X')  # generic type to represent a data point
+porter = PorterStemmer()
 
 def split_data(data: List[X], prob: float) -> Tuple[List[X], List[X]]:
     """Split data into fractions [prob, 1 - prob]"""
@@ -53,11 +56,27 @@ def count_messages(df, label:str = 'is_spam'):
         not_spam, spam = df[label].value_counts(normalize = False)
         return spam, not_spam
 
+def stemSentence(sentence): # function got from https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
+    token_words = word_tokenize(sentence)
+    stem_sentence=[]
+    for word in token_words:
+        stem_sentence.append(porter.stem(word))
+        stem_sentence.append(" ")
+    return "".join(stem_sentence)
+
+def pre_process_message(df, label:str = 'is_spam'):
+    """This function will be responsible for removing punctuation, spit the message and stemm it"""
+    df[label] = df[label].astype(str).str.replace('[^\w\s]','') # remove puctuation
+    df[label] = df[label].astype(str).str.lower() # change words to lowercase
+    print(df.head())
+    df[label] = stemSentence(df[label]) # stemming the text from the message
+    print(df.head())
+    df[label] = df[label].astype(str).str.split() # split string into a list of strings
+
 
 df = read_messages('emails/*/*/*')
-print(df.keys())
 train_messages, test_messages = split_df(df, 0.75)
 spam, not_spam = count_messages(train_messages)
+#print(train_messages.head())
+pre_process_message(train_messages)
 
-print(spam)
-print(not_spam)
