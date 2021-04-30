@@ -44,7 +44,20 @@ def split_df(df, ratio: float, seed = 0):
         train_df = df.sample(frac = ratio, random_state = seed) # split DataFrame into the train part
         test_df = df.drop(train_df.index)
         return train_df, test_df
-      
+
+def count_messages(df, label:str = 'is_spam'):
+    """Responsible for count the amount of messages that are spam or not spam"""
+    if not label in df.keys():
+        raise ValueError('Entry label is not availabe in the Dataframe selected')
+    else:
+        not_spam, spam = df[label].value_counts(normalize = False)
+        return spam, not_spam
+
 
 df = read_messages('emails/*/*/*')
+print(df.keys())
 train_messages, test_messages = split_df(df, 0.75)
+spam, not_spam = count_messages(train_messages)
+
+print(spam)
+print(not_spam)
