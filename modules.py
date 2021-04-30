@@ -36,3 +36,15 @@ def read_messages(path: str):
 
     return df
             
+def split_df(df, ratio: float, seed = 0):
+    """Split Dataframe based on the ratio provided"""
+    if ratio > 1:
+        raise ValueError("Invalid value, please select an amount in the range 0 < ratio < 1")
+    else:
+        train_df = df.sample(frac = ratio, random_state = seed) # split DataFrame into the train part
+        test_df = df.drop(train_df.index)
+        return train_df, test_df
+      
+
+df = read_messages('emails/*/*/*')
+train_messages, test_messages = split_df(df, 0.75)
