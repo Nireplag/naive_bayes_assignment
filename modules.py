@@ -64,14 +64,15 @@ def stemSentence(sentence): # function got from https://www.datacamp.com/communi
         stem_sentence.append(" ")
     return "".join(stem_sentence)
 
-def pre_process_message(df, label:str = 'is_spam'):
+def pre_process_message(df, label:str = 'subject'):
     """This function will be responsible for removing punctuation, spit the message and stemm it"""
     df[label] = df[label].astype(str).str.replace('[^\w\s]','') # remove puctuation
     df[label] = df[label].astype(str).str.lower() # change words to lowercase
-    print(df.head())
-    df[label] = stemSentence(df[label]) # stemming the text from the message
-    print(df.head())
+    #print(df.head())
+    #print(df[label])
+    df[label] = df[label].apply(stemSentence) # stemming the text from the message
     df[label] = df[label].astype(str).str.split() # split string into a list of strings
+    print(df.head())
 
 
 df = read_messages('emails/*/*/*')
@@ -79,4 +80,3 @@ train_messages, test_messages = split_df(df, 0.75)
 spam, not_spam = count_messages(train_messages)
 #print(train_messages.head())
 pre_process_message(train_messages)
-
